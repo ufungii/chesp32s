@@ -1,5 +1,5 @@
 #include "display.h"
-
+#include "game_logic.h"
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_RST);
 
 GameState currentState = STATE_MENU;
@@ -126,12 +126,19 @@ void handleAction() {
       drawSquare(sourceX, sourceY, true);
     }
   } else {
-    board[selY][selX] = board[sourceY][sourceX];
-    board[sourceY][sourceX] = '.';
-    int oldX = sourceX, oldY = sourceY;
-    sourceX = -1;
-    sourceY = -1;
-    drawSquare(oldX, oldY, false);
-    drawSquare(selX, selY, true);
+   // CHECK LEGAL MOVE RULES BEFORE MOVING
+    if (isValidMove(sourceX, sourceY, selX, selY)) {
+      board[selY][selX] = board[sourceY][sourceX];
+      board[sourceY][sourceX] = '.';
+
+      int oldX = sourceX, oldY = sourceY;
+      sourceX = -1; sourceY = -1;
+
+      drawSquare(oldX, oldY, false);
+      drawSquare(selX, selY, true);
+    } else {
+      // Invalid move: reject and inform over Serial
+      Serial.println("Illegal move attempted!");
+    }
   }
 }
