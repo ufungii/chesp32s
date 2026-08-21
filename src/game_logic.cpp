@@ -1,6 +1,24 @@
 #include "game_logic.h"
 #include "display.h"
 
+bool isWhiteTurn = true; // White moves first
+
+void initBoard() {
+  const char startingBoard[8][8] = {
+    {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
+    {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+    {'.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.'},
+    {'.', '.', '.', '.', '.', '.', '.', '.'},
+    {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+    {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}
+  };
+
+  memcpy(board, startingBoard, sizeof(board));
+  isWhiteTurn = true;
+}
+
 bool isWhitePiece(char piece) {
   return piece >= 'A' && piece <= 'Z';
 }
@@ -14,11 +32,49 @@ bool isSameTeam(char p1, char p2) {
   return (isWhitePiece(p1) && isWhitePiece(p2)) || (isBlackPiece(p1) && isBlackPiece(p2));
 }
 
+// Locate the King on the board
+void findKing(bool isWhite, int &kx, int &ky) {
+  char target = isWhite ? 'K' : 'k';
+  for (int y = 0; y < 8; y++) {
+    for (int x = 0; x < 8; x++) {
+      if (board[y][x] == target) {
+        kx = x;
+        ky = y;
+        return;
+      }
+    }
+  }
+}
+
+// Check if any enemy piece can attack the King's square
+bool isKingInCheck(bool isWhite) {
+  int kx = -1, ky = -1;
+  findKing(isWhite, kx, ky);
+  if (kx == -1) return false;
+
+  for (int y = 0; y < 8; y++) {
+    for (int x = 0; x < 8; x++) {
+      char p = board[y][x];
+      if (p == '.') continue;
+      
+      // If it's an enemy piece, check if it has a legal attack line to the King
+      bool enemyPiece = isWhite ? isBlackPiece(p) : isWhitePiece(p);
+      if (enemyPiece && isValidMove(x, y, kx, ky)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// Validates geometric/board legality of a move (ignoring active turn state)
 bool isValidMove(int srcX, int srcY, int destX, int destY) {
   char piece = board[srcY][srcX];
   char target = board[destY][destX];
 
-  // 1. Can't capture your own piece
+  if (piece == '.') return false;
+
+  // Cannot capture your own piece
   if (isSameTeam(piece, target)) return false;
 
   int dx = abs(destX - srcX);
@@ -47,8 +103,7 @@ bool isValidMove(int srcX, int srcY, int destX, int destY) {
       return dx <= 1 && dy <= 1;
 
     case 'R': // ROOK (Straight lines - check path clearing)
-      if (dx != 0 && dy != 0) return false; // Must be straight line
-      // Path obstruction check
+      if (dx != 0 && dy != 0) return false;
       if (dx == 0) {
         int step = (destY > srcY) ? 1 : -1;
         for (int y = srcY + step; y != destY; y += step) {

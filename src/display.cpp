@@ -120,25 +120,48 @@ void drawBoard() {
 
 void handleAction() {
   if (sourceX == -1 && sourceY == -1) {
-    if (board[selY][selX] != '.') {
+    char piece = board[selY][selX];
+    if (piece == '.') return;
+
+    // Only allow selecting current player's pieces
+    if ((isWhiteTurn && isupper(piece)) || (!isWhiteTurn && islower(piece))) {
       sourceX = selX;
       sourceY = selY;
       drawSquare(sourceX, sourceY, true);
     }
   } else {
-   // CHECK LEGAL MOVE RULES BEFORE MOVING
+    // Deselect if tapping same piece
+    if (selX == sourceX && selY == sourceY) {
+      int oldX = sourceX, oldY = sourceY;
+      sourceX = -1; sourceY = -1;
+      drawSquare(oldX, oldY, true);
+      return;
+    }
+
     if (isValidMove(sourceX, sourceY, selX, selY)) {
-      board[selY][selX] = board[sourceY][sourceX];
+      // Temporary move simulation for check validation
+      char tempSource = board[sourceY][sourceX];
+      char tempTarget = board[selY][selX];
+
+      board[selY][selX] = tempSource;
       board[sourceY][sourceX] = '.';
 
+      // Reject move if it leaves or puts own King in check
+      if (isKingInCheck(isWhiteTurn)) {
+        board[sourceY][sourceX] = tempSource; // Revert
+        board[selY][selX] = tempTarget;
+        Serial.println("Illegal Move: King is in check!");
+        return;
+      }
+
+      // Move is legal! Finalize and switch turns
       int oldX = sourceX, oldY = sourceY;
       sourceX = -1; sourceY = -1;
 
+      isWhiteTurn = !isWhiteTurn; // Swap turns
+
       drawSquare(oldX, oldY, false);
       drawSquare(selX, selY, true);
-    } else {
-      // Invalid move: reject and inform over Serial
-      Serial.println("Illegal move attempted!");
     }
   }
 }
