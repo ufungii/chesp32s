@@ -1,5 +1,6 @@
 #include "inputs.h"
 #include "display.h"
+#include "game_logic.h"
 
 XPT2046_Touchscreen ts(TOUCH_CS);
 
@@ -142,10 +143,31 @@ void processInputs() {
       }
     }
 
-    // Action 4: Extra / Flip Board placeholder
-    if (lastOpt2 == HIGH && curOpt2 == LOW) {
-      Serial.println("OPT2 Pressed: Board Flip / Extra Action");
-    }
+ // Track button hold duration
+static unsigned long opt2PressTime = 0;
+static bool opt2Held = false;
+
+if (lastOpt2 == HIGH && curOpt2 == LOW) {
+  opt2PressTime = millis();
+  opt2Held = false;
+}
+
+// If held for > 1000ms: RESTART GAME
+if (curOpt2 == LOW && !opt2Held && (millis() - opt2PressTime > 1000)) {
+  opt2Held = true;
+  initBoard();
+  sourceX = -1; sourceY = -1;
+  drawBoard();
+  Serial.println("Long press: Game Restarted!");
+}
+
+// On release, if it was just a quick tap: FLIP BOARD
+if (lastOpt2 == LOW && curOpt2 == HIGH) {
+  if (!opt2Held) {
+    // Call your flip board logic here
+    Serial.println("Short press: Flip Board triggered");
+  }
+}
   }
 
   lastUp    = curUp;
@@ -156,4 +178,4 @@ void processInputs() {
   lastOpt1  = curOpt1;
   lastBack  = curBack;
   lastOpt2  = curOpt2;
-}
+} 

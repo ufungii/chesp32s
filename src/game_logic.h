@@ -6,6 +6,18 @@
 extern char board[8][8];
 extern bool isWhiteTurn; // Tracks active turn
 
+// Castling rights
+extern bool whiteKingMoved;
+extern bool whiteRookLMoved; // a1 rook (Queenside)
+extern bool whiteRookRMoved; // h1 rook (Kingside)
+extern bool blackKingMoved;
+extern bool blackRookLMoved; // a8 rook (Queenside)
+extern bool blackRookRMoved; // h8 rook (Kingside)
+
+// En Passant tracking (-1 if none available)
+extern int epTargetX;
+extern int epTargetY;
+
 bool isWhitePiece(char piece);
 bool isBlackPiece(char piece);
 bool isSameTeam(char p1, char p2);

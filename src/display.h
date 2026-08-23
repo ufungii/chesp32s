@@ -5,38 +5,44 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ILI9341.h>
 
-// Game States
+#define TFT_CS   5
+#define TFT_DC   15
+#define TFT_RST  -1  // Tied to 3.3V
+
+// Color Palette
+#define COLOR_BG          0x0821 // Midnight Navy/Black
+#define COLOR_SQ_LIGHT    0xDEFB // Crisp Silver/White
+#define COLOR_SQ_DARK     0x4208 // Slate Grey
+#define COLOR_CURSOR      0xFFE0 // Crisp Bright Yellow
+#define COLOR_SELECT      0x07E0 // Bright Emerald Green
+#define COLOR_PIECE_WHITE 0xFFFF // White
+#define COLOR_PIECE_BLACK 0x1082 // Dark Onyx
+
+#define OFFSET_X 12
+#define OFFSET_Y 12
+#define SQ_SIZE  27
+
 enum GameState {
   STATE_MENU,
-  STATE_GAME_LOCAL,
-  STATE_GAME_ESP_NOW,
-  STATE_GAME_LICHESS,
-  STATE_GAME_AI
+  STATE_CHESS_LOCAL,
+  STATE_CHESS_AI,
+  STATE_CHESS_WIRELESS
 };
 
 extern GameState currentState;
 extern int menuSelection;
-
-// Display Pins
-#define TFT_CS    5
-#define TFT_DC    2
-#define TFT_RST  -1
-
-// Board Layout
-#define SQ_SIZE 26                  
-#define OFFSET_X 70                 
-#define OFFSET_Y 16                 
-
-extern Adafruit_ILI9341 tft;
-extern char board[8][8];
 extern int selX, selY;
 extern int sourceX, sourceY;
+extern bool autoFlipPerspective; // Toggle board flip on turn
+
+extern Adafruit_ILI9341 tft;
 
 void initDisplay();
 void drawHomeScreen();
-void updateMenuSelection(int newSel);
+void updateMenuSelection(int newIndex);
 void drawBoard();
-void drawSquare(int col, int row, bool isSelected);
+void drawSquare(int x, int y, bool isCursor);
 void handleAction();
+char showPromotionDialog(bool isWhite);
 
 #endif
