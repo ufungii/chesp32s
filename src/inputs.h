@@ -4,30 +4,23 @@
 #include <Arduino.h>
 #include <XPT2046_Touchscreen.h>
 
-#define TOUCH_CS  0
+// Joystick Pins
+#define JOY_X_PIN        34  // ADC1_CH6
+#define JOY_Y_PIN        35  // ADC1_CH7
+#define JOY_SW_PIN       32  // Joystick Pushbutton (Active LOW)
 
-// Directional & Main Action Pins
-#define BTN_UP    13
-#define BTN_DOWN  14
-#define BTN_LEFT  27
-#define BTN_RIGHT 26
-#define BTN_SEL   25
+// Action / Navigation Buttons
+#define BTN_SEL          JOY_SW_PIN
+#define BTN_OPT1         13  // Cancel / Deselect
+#define BTN_BACK         33  // Return to Home Menu
+#define BTN_OPT2         14  // Flip board / Reset (long press)
 
-// Extra Action Pins
-#define BTN_OPT1  32
-#define BTN_OPT2  4
-#define BTN_BACK  33
+// ADC Thresholds
+#define JOY_THRESH_LOW   1100
+#define JOY_THRESH_HIGH  2700
 
-#define MIN_PRESSURE 400
-
-#define TS_MINX 300
-#define TS_MAXX 3700
-#define TS_MINY 300
-#define TS_MAXY 3800
-
-extern XPT2046_Touchscreen ts;
-
+// Function Prototypes
 void initInputs();
 void processInputs();
 
-#endif
+#endif // INPUTS_H
