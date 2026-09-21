@@ -12,15 +12,17 @@
 // Action / Navigation Buttons
 #define BTN_SEL          JOY_SW_PIN
 #define BTN_OPT1         13  // Cancel / Deselect
-#define BTN_BACK         33  // Return to Home Menu
-#define BTN_OPT2         14  // Flip board / Reset (long press)
+#define BTN_BACK         14 // Return to Home Menu
+#define BTN_OPT2         33 // Flip board / Reset (long press)
 
 // ADC Thresholds
 #define JOY_THRESH_LOW   1100
 #define JOY_THRESH_HIGH  2700
+#define BAT_SENSE_PIN 39 // Analog Input Only 
 
 // Function Prototypes
 void initInputs();
 void processInputs();
+int getBatteryPercentage();
 
 #endif // INPUTS_H

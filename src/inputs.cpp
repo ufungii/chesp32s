@@ -21,6 +21,27 @@ void initInputs() {
     analogSetPinAttenuation(JOY_Y_PIN, ADC_11db);
 
     bootTime = millis();
+
+    // ADC configuration for battery sensing
+  analogReadResolution(12);
+  analogSetAttenuation(ADC_11db);
+}
+
+int getBatteryPercentage() {
+  int rawSum = 0;
+  for (int i = 0; i < 10; i++) {
+    rawSum += analogRead(BAT_SENSE_PIN);
+    delay(2);
+  }
+  float rawAvg = rawSum / 10.0;
+
+  // ESP32 ADC full-scale reference is typically ~3.3V, but internal Vref varies (often 3.1V - 3.3V)
+  // Multiply by 2.0 to account for the 100k:100k divider
+  float batVoltage = (rawAvg / 4095.0) * 3.3 * 2.0;
+
+  // Usable LiPo discharge curve: 3.4V (0%) to 4.2V (100%)
+  int pct = (int)(((batVoltage - 3.4) / (4.2 - 3.4)) * 100.0);
+  return constrain(pct, 0, 100);
 }
 
 void processInputs() {

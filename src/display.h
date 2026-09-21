@@ -44,5 +44,6 @@ void drawBoard();
 void drawSquare(int x, int y, bool isCursor);
 void handleAction();
 char showPromotionDialog(bool isWhite);
+void drawBatteryIndicator(int pct);
 
 #endif

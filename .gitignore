@@ -5,4 +5,9 @@
 .vscode/ipch
 *.bin
 *.elf
-include/secrets.h
+include/secrets.hhardware/**/*.kicad_prl
+hardware/**/*.bak
+hardware/**/*-save.kicad_*
+hardware/**/*_autosave-*
+hardware/**/*.lck
+hardware/**/old/

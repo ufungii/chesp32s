@@ -31,6 +31,16 @@ void initDisplay() {
 }
 
 // -------------------------------------------------------------
+// BATTERYYYY
+// -------------------------------------------------------------
+void drawBatteryIndicator(int pct) {
+  tft.setTextSize(1);
+  tft.setTextColor(0xFFFF, 0x0000);
+  tft.setCursor(tft.width() - 45, 4);
+  tft.printf("%3d%%", pct); // prints the raw count (e.g. 2350)
+}
+
+// -------------------------------------------------------------
 // MENU RENDERING (MODERN SLEEK UI)
 // -------------------------------------------------------------
 void drawHomeScreen() {
@@ -42,7 +52,7 @@ void drawHomeScreen() {
   tft.setTextColor(COLOR_PIECE_WHITE);
   tft.setTextSize(2);
   tft.setCursor(42, 22);
-  tft.print("CHESS!!!");
+  tft.print("chess :)");
 
   const char* options[] = {
     "1. Pass & Play",

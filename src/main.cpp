@@ -3,6 +3,8 @@
 #include "inputs.h"
 #include "game_logic.h"
 
+unsigned long lastBatUpdate = 0;
+
 void setup() {
   Serial.begin(115200);
   delay(500);
@@ -18,4 +20,10 @@ void setup() {
 
 void loop() {
   processInputs();
+  // Update battery percentage every 5 seconds
+  if (millis() - lastBatUpdate > 5000) {
+    lastBatUpdate = millis();
+    int pct = getBatteryPercentage();
+    drawBatteryIndicator(pct);
+  }
 }
