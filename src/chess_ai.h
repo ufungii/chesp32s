@@ -9,10 +9,9 @@ struct Move {
   int score;
 };
 
-// Main AI invocation: computes best move for Black and executes it
-void makeAIMove();
+// Compute best move for Black
+Move calculateBestAIMove(int depth = 2);
 
-// Evaluation and Minimax search
 int evaluateBoard();
 int minimax(int depth, int alpha, int beta, bool isMaximizing);
 

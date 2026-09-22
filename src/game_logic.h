@@ -3,6 +3,15 @@
 
 #include <Arduino.h>
 
+enum class GameMode {
+  PASS_AND_PLAY,
+  VS_ENGINE,
+  PEER_ESPNOW,
+  ONLINE_LICHESS
+};
+
+extern GameMode currentGameMode;
+
 extern char board[8][8];
 extern bool isWhiteTurn; // Tracks active turn
 
@@ -25,5 +34,6 @@ bool isValidMove(int srcX, int srcY, int destX, int destY);
 bool isKingInCheck(bool isWhite);
 void findKing(bool isWhite, int &kx, int &ky);
 void initBoard();
+
 
 #endif

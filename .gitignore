@@ -11,3 +11,5 @@ hardware/**/*-save.kicad_*
 hardware/**/*_autosave-*
 hardware/**/*.lck
 hardware/**/old/
+.vscode/
+.aider*

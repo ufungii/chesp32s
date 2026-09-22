@@ -1,6 +1,8 @@
 #include "game_logic.h"
 #include "display.h"
 
+GameMode currentGameMode = GameMode::PASS_AND_PLAY;
+
 bool isWhiteTurn = true;
 
 bool whiteKingMoved = false;

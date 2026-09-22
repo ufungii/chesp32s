@@ -3,7 +3,6 @@
 #include "display.h"
 
 // Piece-Square Tables (oriented for Black playing from top to bottom)
-// Encourages knights & pawns to control center, king to castle, etc.
 static const int pawnTable[8][8] = {
   { 0,  0,  0,  0,  0,  0,  0,  0},
   {50, 50, 50, 50, 50, 50, 50, 50},
@@ -62,10 +61,10 @@ int evaluateBoard() {
       totalScore += getPieceValue(board[y][x], x, y);
     }
   }
-  return totalScore; // Positive favors White, Negative favors Black
+  return totalScore;
 }
 
-// Alpha-Beta Minimax search (Depth 3 is instant and strong for casual play)
+// Alpha-Beta Minimax search
 int minimax(int depth, int alpha, int beta, bool isMaximizing) {
   if (depth == 0) {
     return evaluateBoard();
@@ -93,7 +92,7 @@ int minimax(int depth, int alpha, int beta, bool isMaximizing) {
 
               maxEval = max(maxEval, eval);
               alpha = max(alpha, eval);
-              if (beta <= alpha) break; // Beta cutoff
+              if (beta <= alpha) return maxEval;
             }
           }
         }
@@ -122,7 +121,7 @@ int minimax(int depth, int alpha, int beta, bool isMaximizing) {
 
               minEval = min(minEval, eval);
               beta = min(beta, eval);
-              if (beta <= alpha) break; // Alpha cutoff
+              if (beta <= alpha) return minEval;
             }
           }
         }
@@ -132,11 +131,9 @@ int minimax(int depth, int alpha, int beta, bool isMaximizing) {
   }
 }
 
-void makeAIMove() {
+Move calculateBestAIMove(int depth) {
   Move bestMove = {-1, -1, -1, -1, 100000};
-  int depth = 3; // 3 plies of lookahead
 
-  // Find best move for Black
   for (int sy = 0; sy < 8; sy++) {
     for (int sx = 0; sx < 8; sx++) {
       if (!isBlackPiece(board[sy][sx])) continue;
@@ -167,22 +164,5 @@ void makeAIMove() {
       }
     }
   }
-
-  // Execute Best Move if found
-  if (bestMove.fromX != -1) {
-    char piece = board[bestMove.fromY][bestMove.fromX];
-    board[bestMove.toY][bestMove.toX] = piece;
-    board[bestMove.fromY][bestMove.fromX] = '.';
-
-    // Auto-promote Black pawn to Queen
-    if (piece == 'p' && bestMove.toY == 7) {
-      board[bestMove.toY][bestMove.toX] = 'q';
-    }
-
-    // Switch turn back to player
-    isWhiteTurn = true;
-    selX = bestMove.toX;
-    selY = bestMove.toY;
-    drawBoard();
-  }
+  return bestMove;
 }
